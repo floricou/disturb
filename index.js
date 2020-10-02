@@ -12,7 +12,7 @@ const ENCODED_SECRET = Buffer.from(SECRET).toString('base64')
 const PORT = process.env.PORT || 1234
 const app = express()
 const proxy = httpProxy.createProxyServer({
-	target: 'ws://localhost:6800',
+	target: 'ws://localhost:6900',
 	ws: true
 })
 const server = http.createServer(app)
@@ -24,7 +24,7 @@ server.on('upgrade', (req, socket, head) => {
 
 // Handle normal http traffic
 app.use('/jsonrpc', (req, res) => {
-	req.pipe(request('http://localhost:6800/jsonrpc')).pipe(res)
+	req.pipe(request('http://localhost:6900/jsonrpc')).pipe(res)
 })
 app.use(
 	'/downloads/' + ENCODED_SECRET,
@@ -46,7 +46,7 @@ if (process.env.HEROKU_APP_NAME) {
 	const APP_URL = `https://${process.env.HEROKU_APP_NAME}.herokuapp.com`
 	const preventIdling = () => {
 		request.post(
-			'http://localhost:6800/jsonrpc',
+			'http://localhost:6900/jsonrpc',
 			{
 				json: {
 					jsonrpc: '2.0',
